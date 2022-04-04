@@ -4,25 +4,36 @@ using UnityEngine;
 
 public class Battle : MonoBehaviour
 {
-    private static int num_combattants = 10;
-    [SerializeField]
-    private Character[] combattants;
-    private int[] delays;
-    private int turnState;
+    private static int num_combatants = 10;
     [SerializeField]
     private UIQueue ui_queue;
 
+    [SerializeField]
+    private Character[] combatants;
+    private int[] delays;
+    private int turnState;
+
+    public Character[] Combatants{
+        get { return combatants; }
+    }
+
+    #region next move info
+    private bool flag;
+    private Character caster;
+    private int caster_index;
+    #endregion
+
 
     // Start is called before the first frame update
-    void Start()
-    {
-        if(combattants == null){
-            combattants = new Character[num_combattants];
+    void Start(){
+        if(combatants == null){
+            combatants = new Character[num_combatants];
         }
-        delays = new int[combattants.Length];
+        delays = new int[combatants.Length];
         // assume all joining combatants are alive
-        for(int i = 0; i < combattants.Length; i++){
-            delays[i] = (combattants[i]==null)?-1:combattants[i].GetModifiedDelay(100);
+        for(int i = 0; i < combatants.Length; i++){
+            combatants[i].EnterBattle(this);
+            delays[i] = (combatants[i]==null)?-1:combatants[i].GetModifiedDelay(100);
         }
         StartCoroutine(StartBattle());
     }
@@ -30,12 +41,24 @@ public class Battle : MonoBehaviour
     private IEnumerator StartBattle(){
         ui_queue.gameObject.SetActive(true);
         yield return new WaitForSeconds(0.1f);
-        // 
-        ui_queue.UpdateQueuePrediction();
+        // battle starts
+        while(true){
+            ui_queue.UpdateQueuePrediction();
+            flag = false;
+            // set next person
+            caster_index = PopDelayQueue(delays);
+            caster = combatants[caster_index];
+            // start combatants turn
+            StartCoroutine(caster.StartTurn());
+            // wait for turn to be complete
+            WaitForFlag();
+            // give a second to process
+            yield return new WaitForSeconds(3.0f);
+        }
     }
 
     public Character GetCharacter(int index){
-        return (index < num_combattants)?combattants[num_combattants]:null;
+        return (index < num_combatants)?combatants[num_combatants]:null;
     }
 
     public Character[] PredictTurns(int turns){
@@ -47,11 +70,27 @@ public class Battle : MonoBehaviour
         for(int i = 0; i < turns; i++){
             // find next person to run and update values
             currentTempPos = PopDelayQueue(predictDelays);
-            playerOrder[i] = combattants[currentTempPos];
+            playerOrder[i] = combatants[currentTempPos];
             // set delay to player
-            predictDelays[currentTempPos] = combattants[currentTempPos].GetModifiedDelay(100);
+            predictDelays[currentTempPos] = combatants[currentTempPos].GetModifiedDelay(100);
         }
         return playerOrder;
+    }
+
+    public void MakeMove(Character moving_character, Move selected_move, Character target){
+        // for now no move changes and if incorrect character submitting a move, ignore
+        if(flag || moving_character != caster){ return; }
+        // make move
+        if(selected_move.Type == MoveType.Attack){
+            target.Damage(selected_move.Power);
+        }
+        else if(selected_move.Type == MoveType.Support){
+            target.Heal(selected_move.Power);
+        }
+        // set delay
+        delays[caster_index] = caster.GetModifiedDelay(selected_move.Delay);
+        //set flag so battle can proceed
+        flag = true;
     }
 
     #region helper methods
@@ -86,6 +125,15 @@ public class Battle : MonoBehaviour
         }
         for(int i = 0; i < destination.Length; i++){
             destination[i] = source[i];
+        }
+    }
+
+    private IEnumerator WaitForFlag(){
+        while(true){
+            if(flag){
+                yield break;
+            }
+            yield return new WaitForSeconds(0.1f);
         }
     }
     #endregion
