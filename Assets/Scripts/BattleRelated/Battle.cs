@@ -51,7 +51,7 @@ public class Battle : MonoBehaviour
             // start combatants turn
             StartCoroutine(caster.StartTurn());
             // wait for turn to be complete
-            WaitForFlag();
+            yield return WaitForFlag();
             // give a second to process
             yield return new WaitForSeconds(3.0f);
         }
@@ -81,10 +81,10 @@ public class Battle : MonoBehaviour
         // for now no move changes and if incorrect character submitting a move, ignore
         if(flag || moving_character != caster){ return; }
         // make move
-        if(selected_move.Type == MoveType.Attack){
+        if(selected_move.Type == MoveType.ATTACK){
             target.Damage(selected_move.Power);
         }
-        else if(selected_move.Type == MoveType.Support){
+        else if(selected_move.Type == MoveType.SUPPORT){
             target.Heal(selected_move.Power);
         }
         // set delay

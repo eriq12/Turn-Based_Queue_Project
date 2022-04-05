@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MoveType {Attack, Support};
+public enum MoveType {ATTACK, SUPPORT};
 
 [CreateAssetMenu(fileName = "MoveData", menuName = "ScriptableObjects/MoveData", order = 2)]
-public class Move : ScriptableObject
+public class Move : ScriptableObject, UIChoice
 {
     [SerializeField]
     private string move_name;
