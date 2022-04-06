@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ButtonChoiceList : MonoBehaviour
 {
-    private enum Direction { forward, backward };
+    private enum Direction { FORWARD, BACKWARD };
     [SerializeField]
     private ButtonMiddleMan[] buttons;
     [SerializeField]
@@ -40,12 +40,21 @@ public class ButtonChoiceList : MonoBehaviour
         foreach(ButtonMiddleMan b in buttons){
             b.ParentList = this;
         }
+        prev_button.interactable = false;
+        next_button.interactable = false;
+    }
 
+    public void NextPage(){
+        ChangeOffset(Direction.FORWARD);
+    }
+
+    public void PrevPage(){
+        ChangeOffset(Direction.BACKWARD);
     }
 
     private void ChangeOffset(Direction dir){
         // get the desired change
-        int indexDelta = (dir == Direction.forward)?1:-1;
+        int indexDelta = (dir == Direction.FORWARD)?1:-1;
         // if it is valid, udpate the options
         if(OffsetWithinBounds(window_offset + indexDelta)){
             window_offset += indexDelta;
