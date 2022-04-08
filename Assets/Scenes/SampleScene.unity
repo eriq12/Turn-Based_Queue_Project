@@ -1570,6 +1570,7 @@ MonoBehaviour:
   - {fileID: 978463433}
   - {fileID: 1505361887}
   - {fileID: 1021218397}
+  default_move: {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
 --- !u!4 &1635137458
 Transform:
   m_ObjectHideFlags: 0
