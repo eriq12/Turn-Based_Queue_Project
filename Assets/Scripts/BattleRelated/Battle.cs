@@ -103,12 +103,13 @@ public class Battle : MonoBehaviour
                 combatant = i;
             }
         }
+        int delay_to_pass = delayList[combatant];
         // if there is a next one, reduce all in list by the delay of next combatant
         if(combatant != -1){
             for(int i = 0; i < delayList.Length; i++){
                 if(delayList[i] != -1){
                     // to avoid many at 0 delay
-                    delayList[i] = (delayList[i] == delayList[combatant])?1:delayList[i]-delayList[combatant];
+                    delayList[i] -= delay_to_pass;
                 }
             }
         }
