@@ -139,14 +139,13 @@ public class Battle : MonoBehaviour
         return (index < num_combatants)?combatants[num_combatants]:null;
     }
 
-    public Character[] PredictTurns(int turns){
-        return PredictTurns(turns, default_move);
-    }
-
-    public Character[] PredictTurns(int turns, Move next_move){
+    public Character[] PredictTurns(int turns, Move next_move=null){
         if(turns < 1){
             return null;
         }
+        // in case next_move is set to null
+        if(next_move == null){ next_move = default_move; }
+
         Character[] playerOrder = new Character[turns];
         TurnInfo[] predict_delays = new TurnInfo[combatant_turn_info.Length];
         CopyDelayInfo(combatant_turn_info, predict_delays);

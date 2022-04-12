@@ -161,6 +161,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7245dd10319807b71b39e2380fc7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &78642154 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8550800653205777816, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
+  m_PrefabInstance: {fileID: 715233286}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &78642157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 78642154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1731860258}
+          m_TargetAssemblyTypeName: ButtonChoiceList, Assembly-CSharp
+          m_MethodName: set_SelectedMove
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
+            m_ObjectArgumentAssemblyTypeName: Move, Assembly-CSharp
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!224 &90876105 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8550800653205777817, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
@@ -171,7 +205,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8550800653205777818, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
   m_PrefabInstance: {fileID: 1678621901}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 612604224}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
@@ -323,7 +357,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8550800653205777818, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
   m_PrefabInstance: {fileID: 715233286}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 78642154}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
@@ -759,6 +793,40 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &612604224 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8550800653205777816, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
+  m_PrefabInstance: {fileID: 1678621901}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &612604227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612604224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1731860258}
+          m_TargetAssemblyTypeName: ButtonChoiceList, Assembly-CSharp
+          m_MethodName: set_SelectedMove
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
+            m_ObjectArgumentAssemblyTypeName: Move, Assembly-CSharp
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1001 &681590807
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1011,6 +1079,35 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8550800653205777816, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
   m_PrefabInstance: {fileID: 127678826}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &734908340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734908337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1731860258}
+          m_TargetAssemblyTypeName: ButtonChoiceList, Assembly-CSharp
+          m_MethodName: set_SelectedMove
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
+            m_ObjectArgumentAssemblyTypeName: Move, Assembly-CSharp
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1001 &735996327
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1945,6 +2042,7 @@ MonoBehaviour:
   next_button: {fileID: 163508479}
   back_button: {fileID: 1999646734}
   button_preset: {fileID: 8550800653205777816, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
+  queue: {fileID: 1475603920}
 --- !u!114 &1786308304 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8550800653205777818, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}

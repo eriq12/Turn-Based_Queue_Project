@@ -18,6 +18,15 @@ public class ButtonChoiceList : MonoBehaviour
     private int window_size;
     private int window_offset;
 
+    [SerializeField]
+    private UIQueue queue;
+    [SerializeField]
+    private float delay_time = 0.1f;
+    private float timer;
+    private bool selection_changed;
+
+    private Move next_move, possible_next;
+
     private Player target;
 
     public UIChoice[] Options{
@@ -34,6 +43,21 @@ public class ButtonChoiceList : MonoBehaviour
             target = value;
         }
     }
+
+    // tries to make changes not immediately change the ui, 
+    // as there are events on select and deselect /
+    // on pointer enter and exit, 
+    // so it waits a split sec before changing, should it actually be changed
+    public Move SelectedMove{
+        get { return next_move; }
+        set {
+            if(possible_next != value){
+                possible_next = value;
+                timer = delay_time;
+                selection_changed = true;
+            }
+        }
+    }
     
     void Start(){
         window_size = buttons.Length;
@@ -42,6 +66,23 @@ public class ButtonChoiceList : MonoBehaviour
         }
         prev_button.interactable = false;
         next_button.interactable = false;
+        selection_changed = false;
+        timer = 0;
+    }
+
+    // this is designed to limit the amount of times the UpdateQueuePrediction method is called
+    void Update(){
+        if(timer > 0){
+            timer -= Time.deltaTime;
+        }
+        else if(selection_changed){
+            selection_changed = false;
+            timer = -1;
+            if(possible_next != next_move){
+                queue.UpdateQueuePrediction(possible_next);
+                next_move = possible_next;
+            }
+        }
     }
 
     public void NextPage(){

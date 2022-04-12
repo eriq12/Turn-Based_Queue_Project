@@ -49,8 +49,8 @@ public class UIQueue : MonoBehaviour
         battle = new_battle;
     }
 
-    public void UpdateQueuePrediction(){
-        Character[] list = battle.PredictTurns(queue_array.Length);
+    public void UpdateQueuePrediction(Move selected_move=null){
+        Character[] list = battle.PredictTurns(queue_array.Length, selected_move);
         for(int i = 0; i < queue_array.Length; i++){
             queue_array[i].UpdateUnitTarget(list[i]);
         }
