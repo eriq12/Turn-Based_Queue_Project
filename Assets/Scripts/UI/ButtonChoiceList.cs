@@ -20,6 +20,16 @@ public class ButtonChoiceList : MonoBehaviour
 
     private Player target;
 
+    #region QueuePrediction related variables
+    [SerializeField]
+    private UIQueue queue;
+    [SerializeField]
+    private float delay_time = 0.1f;
+    private float timer;
+    private bool selection_changed;
+    private Move next_move, possible_next;
+    #endregion
+
     public UIChoice[] Options{
         get{ return options; }
         set{
@@ -34,6 +44,20 @@ public class ButtonChoiceList : MonoBehaviour
             target = value;
         }
     }
+
+    /** sets values to be changed, but wait a sec before changing to wait for more updates 
+     *  due to the nature of how the button middle man script will set
+     */
+     public Move SelectedMove{
+        get { return next_move; }
+        set {
+            if(possible_next != value){
+                possible_next = value;
+                timer = delay_time;
+                selection_changed = true;
+            }
+        }
+     }
     
     void Start(){
         window_size = buttons.Length;
@@ -42,6 +66,29 @@ public class ButtonChoiceList : MonoBehaviour
         }
         prev_button.interactable = false;
         next_button.interactable = false;
+        selection_changed = false;
+        timer = 0;
+        next_move = null;
+        possible_next = null;
+    }
+
+    void Update(){
+        // reduce timer
+        if(timer > 0){
+            timer -= Time.deltaTime;
+        }
+        // else if the selection was changed
+        else if(selection_changed){
+            // update slection_changed
+            selection_changed = false;
+            timer = -1;
+            // if actually something new
+            if(possible_next != next_move){
+                // set the new prediction
+                queue.UpdateQueuePrediction(possible_next);
+                next_move = possible_next;
+            }
+        }
     }
 
     public void NextPage(){

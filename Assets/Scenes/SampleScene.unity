@@ -1570,6 +1570,7 @@ MonoBehaviour:
   - {fileID: 978463433}
   - {fileID: 1505361887}
   - {fileID: 1021218397}
+  default_move: {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
 --- !u!4 &1635137458
 Transform:
   m_ObjectHideFlags: 0
@@ -1944,6 +1945,8 @@ MonoBehaviour:
   next_button: {fileID: 163508479}
   back_button: {fileID: 1999646734}
   button_preset: {fileID: 8550800653205777816, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
+  queue: {fileID: 1475603920}
+  delay_time: 0.1
 --- !u!114 &1786308304 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8550800653205777818, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}

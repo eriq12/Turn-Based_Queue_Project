@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ButtonMiddleMan : MonoBehaviour
+public class ButtonMiddleMan : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private UIChoice option;
     private Button button;
@@ -53,4 +54,24 @@ public class ButtonMiddleMan : MonoBehaviour
     public void ChooseOption(){
         parent_list.MakeChoice(option);
     }
+
+    #region selection event handlers
+    public void OnSelect(BaseEventData eventData){
+        UpdateSelection();
+    }
+    public void OnDeselect(BaseEventData eventData){
+        UpdateSelection(false);
+    }
+    public void OnPointerEnter(PointerEventData eventData){
+        UpdateSelection();
+    }
+    public void OnPointerExit(PointerEventData eventData){
+        UpdateSelection(false);
+    }
+    private void UpdateSelection(bool selecting=true){
+        if(option is Move){
+            parent_list.SelectedMove = (selecting)?(Move)option:null;
+        }
+    }
+    #endregion
 }

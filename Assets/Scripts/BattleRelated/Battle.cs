@@ -12,6 +12,8 @@ public class Battle : MonoBehaviour
     private Character[] combatants;
     private int[] delays;
     private int turnState;
+    [SerializeField]
+    private Move default_move;
 
     public Character[] Combatants{
         get { return combatants; }
@@ -61,18 +63,25 @@ public class Battle : MonoBehaviour
         return (index < num_combatants)?combatants[num_combatants]:null;
     }
 
-    public Character[] PredictTurns(int turns){
+    public Character[] PredictTurns(int turns, Move next_move=null){
+        // protection in case the amount of turns asked is 0 or less
+        if(turns < 1) { return null; }
+        // in case if there is no next move
+        if(next_move == null) { next_move = default_move; }
         Character[] playerOrder = new Character[turns];
         int[] predictDelays = new int[delays.Length];
         CopyArrays<int>(delays, predictDelays);
-        // start prediction
-        int currentTempPos = -1;
-        for(int i = 0; i < turns; i++){
+        // do first prediction in case of a specified next_move
+        int currentTempPos = PopDelayQueue(predictDelays);
+        playerOrder[0] = combatants[currentTempPos];
+        predictDelays[currentTempPos] = combatants[currentTempPos].GetModifiedDelay(next_move.Delay);
+        // start remaining predictions
+        for(int i = 1; i < turns; i++){
             // find next person to run and update values
             currentTempPos = PopDelayQueue(predictDelays);
             playerOrder[i] = combatants[currentTempPos];
             // set delay to player
-            predictDelays[currentTempPos] = combatants[currentTempPos].GetModifiedDelay(100);
+            predictDelays[currentTempPos] = combatants[currentTempPos].GetModifiedDelay(default_move.Delay);
         }
         return playerOrder;
     }
