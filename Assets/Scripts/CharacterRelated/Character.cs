@@ -27,6 +27,12 @@ public abstract class Character : MonoBehaviour, UIChoice
 
     #region accessors
 
+    public string Name{
+        get {
+            return unit_name;
+        }
+    }
+
     public int Speed{
         get {
             return speed;
@@ -42,12 +48,6 @@ public abstract class Character : MonoBehaviour, UIChoice
     public int Health{
         get {
             return current_health;
-        }
-    }
-
-    public string Name{
-        get {
-            return unit_name;
         }
     }
 
@@ -87,6 +87,10 @@ public abstract class Character : MonoBehaviour, UIChoice
         current_battle = null;
     }
 
+    /// <summary>
+    /// Method <c>GetModifiedDelay</c> takes in the base delay and returns speed modified delay
+    /// </summary>
+    /// <param name="baseDelay">the base delay of the move that the method takes</param>
     public int GetModifiedDelay(int baseDelay){
         return baseDelay * 128 / speed;
     }
@@ -115,5 +119,10 @@ public abstract class Character : MonoBehaviour, UIChoice
         current_battle = null;
     }
 
+    /// <summary>
+    /// This method is invoked everytime the character can move.
+    /// To decide on the turn the character wants to take, the
+    /// instance needs to invoke the battle's MakeMove method.
+    /// </summary>
     public abstract IEnumerator StartTurn();
 }

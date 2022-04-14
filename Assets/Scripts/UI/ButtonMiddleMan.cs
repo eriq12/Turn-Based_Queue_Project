@@ -56,12 +56,24 @@ public class ButtonMiddleMan : MonoBehaviour, ISelectHandler, IDeselectHandler, 
     }
 
     #region selection event handlers
+    /// <summary>
+    /// When the button is selected, it envokes the method 
+    /// UpdateSelection <see cref="UpdateSelection"/> 
+    /// to change prediction queue (if the option is a move).
+    /// Selection counter part of OnPointerEnter <see cref="OnPointerEnter"/>
+    /// </summary>
     public void OnSelect(BaseEventData eventData){
         UpdateSelection();
     }
     public void OnDeselect(BaseEventData eventData){
         UpdateSelection(false);
     }
+    /// <summary>
+    /// When the button is moused over, it envokes the method 
+    /// UpdateSelection <see cref="UpdateSelection"/> 
+    /// to change prediction queue (if the option is a move).
+    /// Pointer counter part of OnSelect <see cref="OnSelect"/>
+    /// </summary>
     public void OnPointerEnter(PointerEventData eventData){
         UpdateSelection();
     }

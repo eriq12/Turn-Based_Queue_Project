@@ -23,6 +23,11 @@ public class UIQueue : MonoBehaviour
         }
     }
 
+    public Battle Battle{
+        get{ return battle; }
+        set{ battle = value; }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,13 +49,14 @@ public class UIQueue : MonoBehaviour
         }
     }
 
-    // updates battlefield
-    public void SetBattle(Battle new_battle){
-        battle = new_battle;
-    }
-
+    /// <summary>
+    /// Invoked to update the Battle Queue Prediction UI. Can specify the next used move to better predict.
+    /// </summary>
+    /// <param name="next_move">(option)The next move that would be used.</param>
     public void UpdateQueuePrediction(Move next_move = null){
         Character[] list = battle.PredictTurns(queue_array.Length, next_move);
+        // after the suppposed next predicted moves are obtained, update the Queue Unit UI elements to
+        // accurately represeent the new prediction (basically setting their targets to be the new respective characters)
         for(int i = 0; i < queue_array.Length; i++){
             queue_array[i].UpdateUnitTarget(list[i]);
         }
