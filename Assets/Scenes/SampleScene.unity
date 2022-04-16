@@ -1178,6 +1178,7 @@ MonoBehaviour:
   team: {fileID: 11400000, guid: aa1fdf9c9d541362890569ad93937c22, type: 2}
   moveset:
   - {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
+  ui_options: {fileID: 0}
 --- !u!4 &978463434
 Transform:
   m_ObjectHideFlags: 0
@@ -1236,6 +1237,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a485e60ea0852434c93d2602a1d0eedc, type: 2}
   - {fileID: 11400000, guid: 17623da51d2bc2446bcae8a2a8c69663, type: 2}
   - {fileID: 11400000, guid: 4de92f7cfeb51b44ca930214afec2702, type: 2}
+  - {fileID: 11400000, guid: 4128a0da3645ba44193d367521068f6b, type: 2}
   ui_options: {fileID: 1731860258}
 --- !u!4 &1021218398
 Transform:
@@ -1447,6 +1449,7 @@ MonoBehaviour:
   team: {fileID: 11400000, guid: 95b53fe20349fcc518ca66cfeb2debaf, type: 2}
   moveset:
   - {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
+  ui_options: {fileID: 0}
 --- !u!4 &1505361888
 Transform:
   m_ObjectHideFlags: 0

@@ -25,6 +25,24 @@ public abstract class Character : MonoBehaviour, UIChoice
 
     #endregion
 
+     #region turn choice related
+    // ui to use
+    [SerializeField]
+    protected ButtonChoiceList ui_options;
+
+    // move selected
+    protected Move turn_move;
+
+    // the target of the move (who are we performing the move on)
+    protected Character target;
+
+    // what are we choosing right now?
+    protected ChoiceType choice_type = ChoiceType.NONE;
+
+    // used in the WaitForChoice calls
+    protected bool choice_flag = false;
+    #endregion
+
     #region accessors
 
     public string Name{
@@ -113,6 +131,28 @@ public abstract class Character : MonoBehaviour, UIChoice
 
     public void EnterBattle(Battle b){
         current_battle = b;
+    }
+
+    public bool ValidTarget(Character target, Move move = null){
+        if(move == null){
+            // should never happen, but in case, just return false
+            if(turn_move == null) { return false; }
+            move = turn_move;
+        }
+        // technically under the code for selecting in UI, 
+        // this should also never come here, but in case it should also return null
+        if(target == null && !(move.TargetRestriction == TargetRestriction.ALL || move.TargetRestriction == TargetRestriction.ALLY)){
+            return false;
+        }
+        // return false if the following conditions are true:
+        // can only target enemies and the target is an ally
+        // can only target allies and the target is an enemy
+        // other options should automatically target or have no restrictions
+        if(move.TargetRestriction == TargetRestriction.ENEMY && Faction.IsAlly(target.Faction) ||
+            move.TargetRestriction == TargetRestriction.ALLY && Faction.IsEnemy(target.Faction)){
+            return false;
+        }
+        return true;
     }
 
     public void LeaveBattle(){

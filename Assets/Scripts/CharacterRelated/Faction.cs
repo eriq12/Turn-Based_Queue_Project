@@ -21,7 +21,7 @@ public class Faction : ScriptableObject
     }
 
     public bool IsAlly(Faction other){
-        return ArrayContains(other, allies);
+        return other == this || ArrayContains(other, allies);
     }
 
     private bool ArrayContains(Faction other, Faction[] arr){

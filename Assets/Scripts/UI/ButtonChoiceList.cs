@@ -118,6 +118,7 @@ public class ButtonChoiceList : MonoBehaviour
         if(options == null){
             foreach(ButtonMiddleMan b in buttons){
                 b.Option = null;
+                b.interactable = false;
             }
             prev_button.interactable = false;
             next_button.interactable = false;
@@ -129,10 +130,12 @@ public class ButtonChoiceList : MonoBehaviour
         for(int i = 0; i < buttons.Length; i++){
             if(reachedEnd || offset + i >= options.Length){
                 buttons[i].Option = null;
+                buttons[i].interactable = false;
                 reachedEnd = true;
             }
             else{
                 buttons[i].Option = options[offset + i];
+                buttons[i].interactable = (options[offset + i] is Move) || target.ValidTarget((Character)options[offset + i]);
             }
         }
         // update next and prev

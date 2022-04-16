@@ -114,16 +114,34 @@ public class Battle : MonoBehaviour
         // for now no move changes and if incorrect character submitting a move, ignore
         if(flag || moving_character != caster){ return; }
         // make move
-        if(selected_move.Type == MoveType.ATTACK){
-            target.Damage(selected_move.Power);
-        }
-        else if(selected_move.Type == MoveType.SUPPORT){
-            target.Heal(selected_move.Power);
-        }
+        switch(selected_move.TargetRestriction){
+            case TargetRestriction.ALL:
+                foreach(Character c in combatants){
+                    if(c != null && c != moving_character){
+                        ApplyMove(moving_character, selected_move, c);
+                    }
+                }
+                break;
+            case TargetRestriction.SELF:
+                ApplyMove(moving_character, selected_move, moving_character);
+                break;
+            default:
+                ApplyMove(moving_character, selected_move, target);
+                break;
+        } 
         // set delay
         delays[caster_index] = caster.GetModifiedDelay(selected_move.Delay);
         //set flag so battle can proceed
         flag = true;
+    }
+
+    private void ApplyMove(Character casting_character, Move move, Character target){
+        if(move.Type == MoveType.ATTACK){
+            target.Damage(move.Power);
+        }
+        else if(move.Type == MoveType.SUPPORT){
+            target.Heal(move.Power);
+        }
     }
 
     #region helper methods
@@ -142,7 +160,7 @@ public class Battle : MonoBehaviour
         for(int i = 0; i < delayList.Length; i++){
             // if on valid combattant and sooner delay 
             // (the delay of current index has less than the referenced index)
-            if(delayList[i] != -1 && (combatant == -1 || delayList[combatant] > delayList[i])){
+            if( combatants[i] != null && combatants[i].IsAlive && (combatant == -1 || delayList[combatant] > delayList[i])){
                 // change to reference current point
                 combatant = i;
             }
