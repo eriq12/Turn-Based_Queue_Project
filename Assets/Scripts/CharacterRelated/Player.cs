@@ -6,8 +6,10 @@ public class Player : Character
 {
     public override IEnumerator StartTurn(){
         // clear previous selections
+        Debug.Log(gameObject.name + "'s turn has begun, clearing fields to begin turn...");
         turn_move = null;
         target = null;
+        Debug.Log("Setting UI options page's target to " + gameObject.name);
         ui_options.Target = this;
         // start up selections
         choice_type = ChoiceType.MOVE;

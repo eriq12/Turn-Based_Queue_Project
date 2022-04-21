@@ -27,6 +27,8 @@ public class ButtonChoiceList : MonoBehaviour
     private float timer;
     private bool selection_changed;
 
+    private int buttons_initialized;
+
     private Move next_move, possible_next;
 
     private Player target;
@@ -34,14 +36,9 @@ public class ButtonChoiceList : MonoBehaviour
     public UIChoice[] Options{
         get{ return options; }
         set{
-            if(options == null && value != null){
-                selection_page.SetActive(true);
-            }
+            Debug.Log("Options of the Options UI has been changed.");
             options = value;
-            UpdateScreen();
-            if(options == null){
-                selection_page.SetActive(false);
-            }
+            StartCoroutine(UpdateScreen());
         }
     }
 
@@ -68,6 +65,7 @@ public class ButtonChoiceList : MonoBehaviour
     }
     
     void Start(){
+        buttons_initialized = 0;
         window_size = buttons.Length;
         foreach(ButtonMiddleMan b in buttons){
             b.ParentList = this;
@@ -101,13 +99,21 @@ public class ButtonChoiceList : MonoBehaviour
         ChangeOffset(Direction.BACKWARD);
     }
 
+    public void MarkInitialized(){
+        buttons_initialized++;
+        if(buttons_initialized == buttons.Length){
+            selection_page.SetActive(false);
+            Debug.Log("All buttons have been initialized, deactivating selection page.");
+        }
+    }
+
     private void ChangeOffset(Direction dir){
         // get the desired change
         int indexDelta = (dir == Direction.FORWARD)?1:-1;
         // if it is valid, udpate the options
         if(OffsetWithinBounds(window_offset + indexDelta)){
             window_offset += indexDelta;
-            UpdateScreen();
+            StartCoroutine(UpdateScreen());
         }
     }
 
@@ -116,15 +122,21 @@ public class ButtonChoiceList : MonoBehaviour
     }
 
     // updates all options
-    private void UpdateScreen(){
-        if(options == null){
+    private IEnumerator UpdateScreen(){
+        // wait 
+        if(options == null && selection_page.activeInHierarchy){
             foreach(ButtonMiddleMan b in buttons){
                 b.Option = null;
                 b.interactable = false;
             }
             prev_button.interactable = false;
             next_button.interactable = false;
-            return;
+            selection_page.SetActive(false);
+            yield break;
+        }
+        if(!selection_page.activeInHierarchy){
+            selection_page.SetActive(true);
+            yield return null;
         }
         int offset = window_offset * window_size;
         bool reachedEnd = false;

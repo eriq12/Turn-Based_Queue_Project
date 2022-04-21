@@ -19,10 +19,12 @@ public class ButtonMiddleMan : MonoBehaviour, ISelectHandler, IDeselectHandler, 
                 return;
             }
             else if(value == null){
+                Debug.Log(gameObject.name + " is being disabled.");
                 text.text = "";
                 option = null;
             }
             else{
+                Debug.Log(gameObject.name + " is set to " + value.Name);
                 text.text = value.Name;
                 option = value;
             }
@@ -36,7 +38,11 @@ public class ButtonMiddleMan : MonoBehaviour, ISelectHandler, IDeselectHandler, 
 
     public ButtonChoiceList ParentList{
         get{ return parent_list; }
-        set{ parent_list = value; }
+        set{ 
+            parent_list = value;
+            Debug.Log(gameObject.name + " has had it's controlling parent list set. Notifying the parent_list...");
+            parent_list.MarkInitialized();
+        }
     }
 
     void Start(){
