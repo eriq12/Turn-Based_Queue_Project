@@ -7,7 +7,7 @@ public class ButtonChoiceList : MonoBehaviour
 {
     private enum Direction { FORWARD, BACKWARD };
     [SerializeField]
-    private GameObejct selection_page;
+    private GameObject selection_page;
     [SerializeField]
     private ButtonMiddleMan[] buttons;
     [SerializeField]
@@ -40,7 +40,7 @@ public class ButtonChoiceList : MonoBehaviour
             options = value;
             UpdateScreen();
             if(options == null){
-                selection_page.SetActive(true);
+                selection_page.SetActive(false);
             }
         }
     }
