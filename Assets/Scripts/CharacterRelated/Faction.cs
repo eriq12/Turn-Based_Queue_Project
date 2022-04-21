@@ -17,19 +17,10 @@ public class Faction : ScriptableObject
     }
 
     public bool IsEnemy(Faction other){
-        return ArrayContains(other, enemies);
+        return System.Array.IndexOf(enemies, other) != -1;
     }
 
     public bool IsAlly(Faction other){
-        return ArrayContains(other, allies);
-    }
-
-    private bool ArrayContains(Faction other, Faction[] arr){
-        foreach(Faction f in arr){
-            if(other == f){
-                return true;
-            }
-        }
-        return false;
+        return other == this || System.Array.IndexOf(allies, other) != -1;
     }
 }

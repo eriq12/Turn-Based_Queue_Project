@@ -4,10 +4,10 @@ using UnityEngine;
 using System;
 
 #region queue_datatypes
-public class TurnInfo : IComparable<TurnInfo>{
+public class CombatantInfo : IComparable<CombatantInfo>{
     #region information
+
     private Character caster;
-    private int caster_index;
     private int delay_set;
     private int delay_left;
     private int turn;
@@ -16,9 +16,6 @@ public class TurnInfo : IComparable<TurnInfo>{
     #region accessors
     public Character Caster{
         get{ return caster; }
-    }
-    public int CasterIndex{
-        get{ return caster_index; }
     }
     public int DelayCurrent{
         get{ return delay_left; }
@@ -29,17 +26,19 @@ public class TurnInfo : IComparable<TurnInfo>{
     public int Turn{
         get{ return turn; }
     }
+
+    public bool Inactive{
+        get{ return caster.IsDead; }
+    }
     #endregion
 
-    public TurnInfo(Character c, int indx, Move move){
+    public CombatantInfo(Character c, Move move){
         caster = c;
-        caster_index = indx;
         SetNewMove(move);
     }
 
-    private TurnInfo(Character c, int indx, int dNow, int dOrg){
+    private CombatantInfo(Character c, int dNow, int dOrg){
         caster = c;
-        caster_index = indx;
         delay_left = dNow;
         delay_set = dOrg;
     }
@@ -50,39 +49,48 @@ public class TurnInfo : IComparable<TurnInfo>{
         turn++;
     }
 
-    public TurnInfo Copy(){
-        return new TurnInfo(caster, caster_index, delay_left, delay_set);
+    public CombatantInfo Copy(){
+        return new CombatantInfo(caster, delay_left, delay_set);
     }
 
     public void ProgressTime(int delay){
-        delay_left -= delay;
+        if(caster.IsAlive){
+            delay_left -= delay;
+        }
     }
 
-    public int CompareTo(TurnInfo other){
-        // first check delay left
+    public int CompareTo(CombatantInfo other){
+        // first make sure neither of them are dead
+        if(Inactive || other.Inactive){
+            if(Inactive && other.Inactive){
+                return 0;
+            }
+            return (Inactive)?-1:1;
+        }
+        // afterwards, first check delay left
         int result = other.DelayCurrent - delay_left ;
         if(result != 0){ return result; }
         // then check turn
         result = other.Turn - turn;
         if(result != 0){ return result; }
-        // then check for who had the longer wait
-        result = other.DelayOriginal - delay_set;
-        if(result != 0){ return result; }
-        // finally just do by index
-        return other.CasterIndex - caster_index;
+        // finally check for who had the longer wait
+        return other.DelayOriginal - delay_set;
     }
 }
 #endregion
 
 public class Battle : MonoBehaviour
 {
-    private static int num_combatants = 10;
     [SerializeField]
     private UIQueue ui_queue;
 
     [SerializeField]
     private Character[] combatants;
-    private TurnInfo[] combatant_turn_info;
+
+    private List<Character> join_queue;
+
+    private bool ready;
+    private List<CombatantInfo> combatant_turn_info;
     private int turnState;
     [SerializeField]
     private Move default_move;
@@ -91,52 +99,88 @@ public class Battle : MonoBehaviour
         get{ return default_move; }
     }
 
+    public bool IsReady{
+        get { return ready; }
+    }
+
+    public int NumCombatants {
+        get { return combatant_turn_info.Count; }
+    }
+
+    public bool HasConflict{
+        get{
+            List<Faction> factionsInConflict = new List<Faction>();
+            foreach(CombatantInfo ci in combatant_turn_info){
+                if(ci.Caster.IsDead){
+                    continue;
+                }
+                bool dne = true;
+                Faction faction = ci.Caster.Faction;
+                for(int i = 0; dne && i < factionsInConflict.Count; i++){
+                    if(faction == factionsInConflict[i]){
+                        dne = false;
+                    }
+                    else if(faction.IsEnemy(factionsInConflict[i])){
+                        return true;
+                    }
+                }
+                if(dne){
+                    factionsInConflict.Add(faction);
+                }
+            }
+            return false;
+        }
+    }
+
     public Character[] Combatants{
-        get { return combatants; }
+        get {
+            Character[] result = new Character[combatant_turn_info.Count];
+            for(int i = 0; i < combatant_turn_info.Count; i++){
+                result[i] = combatant_turn_info[i].Caster;
+            }
+            return result;
+        }
     }
 
     #region next move info
     private bool flag;
-    private Character caster;
-    private int caster_index;
+    private CombatantInfo caster_info;
     #endregion
 
 
     // Start is called before the first frame update
     void Start(){
-        if(combatants == null){
-            combatants = new Character[num_combatants];
-        }
-        combatant_turn_info = new TurnInfo[combatants.Length];
-        // assume all joining combatants are alive
-        for(int i = 0; i < combatants.Length; i++){
-            combatants[i].EnterBattle(this);
-            combatant_turn_info[i] = new TurnInfo(combatants[i], i, default_move);
-        }
-        StartCoroutine(StartBattle());
+        combatant_turn_info = new List<CombatantInfo>();
+        join_queue = new List<Character>();
+        ready = true;
+        StartCoroutine(ProcessBattle());
     }
 
-    private IEnumerator StartBattle(){
+    private IEnumerator ProcessBattle(){
+        while(combatant_turn_info.Count < 2 || !HasConflict){
+            AddCombatantsIntoFray();
+            yield return new WaitForSeconds(0.1f);
+        }
         ui_queue.gameObject.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         // battle starts
-        while(true){
+        while(HasConflict){
+            // add in other combatants
+            AddCombatantsIntoFray();
+            // update queue
             ui_queue.UpdateQueuePrediction();
             flag = false;
             // set next person
-            caster_index = PopDelayQueue(combatant_turn_info);
-            caster = combatants[caster_index];
+            caster_info = PopDelayQueue(combatant_turn_info);
             // start combatants turn
-            StartCoroutine(caster.StartTurn());
+            StartCoroutine(caster_info.Caster.StartTurn());
             // wait for turn to be complete
             yield return WaitForFlag();
             // give a second to process
             yield return new WaitForSeconds(3.0f);
         }
-    }
-
-    public Character GetCharacter(int index){
-        return (index < num_combatants)?combatants[num_combatants]:null;
+        ui_queue.gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     public Character[] PredictTurns(int turns, Move next_move=null){
@@ -147,77 +191,123 @@ public class Battle : MonoBehaviour
         if(next_move == null){ next_move = default_move; }
 
         Character[] playerOrder = new Character[turns];
-        TurnInfo[] predict_delays = new TurnInfo[combatant_turn_info.Length];
-        CopyDelayInfo(combatant_turn_info, predict_delays);
+        List<CombatantInfo> predict_delays = CopyDelayInfo(combatant_turn_info);
         // start prediction with first element
-        int currentTempPos = PopDelayQueue(predict_delays);
-        playerOrder[0] = combatants[currentTempPos];
-        predict_delays[currentTempPos].SetNewMove(next_move);
+        CombatantInfo next_char_info = PopDelayQueue(predict_delays);
+        playerOrder[0] = next_char_info.Caster;
+        next_char_info.SetNewMove(next_move);
         // continue on with the rest of the player turns
         for(int i = 1; i < turns; i++){
             // find next person to run and update values
-            currentTempPos = PopDelayQueue(predict_delays);
-            playerOrder[i] = combatants[currentTempPos];
+            next_char_info = PopDelayQueue(predict_delays);
+            playerOrder[i] = next_char_info.Caster;
             // set delay to player
-            predict_delays[currentTempPos].SetNewMove(default_move);
+            next_char_info.SetNewMove(default_move);
         }
         return playerOrder;
     }
 
     public void MakeMove(Character moving_character, Move selected_move, Character target){
         // for now no move changes and if incorrect character submitting a move, ignore
-        if(flag || moving_character != caster){ return; }
+        if(flag || moving_character != caster_info.Caster){ return; }
         // make move
-        if(selected_move.Type == MoveType.ATTACK){
-            target.Damage(selected_move.Power);
-        }
-        else if(selected_move.Type == MoveType.SUPPORT){
-            target.Heal(selected_move.Power);
+        switch(selected_move.TargetRestriction){
+            case TargetRestriction.ALL:
+                foreach(CombatantInfo ci in combatant_turn_info){
+                    Character c = ci.Caster;
+                    if(c != null && c != moving_character){
+                        ApplyMove(moving_character, selected_move, c);
+                    }
+                }
+                break;
+            case TargetRestriction.SELF:
+                ApplyMove(moving_character, selected_move, moving_character);
+                break;
+            default:
+                ApplyMove(moving_character, selected_move, target);
+                break;
         }
         // set delay
-        combatant_turn_info[caster_index].SetNewMove(selected_move);
+        caster_info.SetNewMove(selected_move);
         //set flag so battle can proceed
         flag = true;
     }
 
-    #region helper methods
-    private int PopDelayQueue(TurnInfo[] delayList){
-        // find next combatant
-        TurnInfo combatant = null;
-        for(int i = 0; i < delayList.Length; i++){
-            // if on valid combattant
-            if(delayList[i] != null && (combatant == null || combatant.CompareTo(delayList[i]) < 0)){
-                combatant = delayList[i];
+    public void EnterBattle(Character c){
+        if(c == null) { return; }
+        // TODO: When turned to list, then add to queue to add into battle next turn
+        join_queue.Add(c);
+    }
+
+    public void LeaveBattle(Character c){
+        if(c == null) { return; }
+        // TODO: When turned to list, then remove the character's info from list
+        for(int i = 0; i < combatant_turn_info.Count; i++){
+            if(combatant_turn_info[i].Caster == c){
+                combatant_turn_info.RemoveAt(i);
+                return;
             }
         }
-        if(combatant == null){
-            return -1;
+    }
+
+    private void AddCombatantsIntoFray(){
+        while(join_queue.Count > 0){
+            Character c = join_queue[0];
+            join_queue.RemoveAt(0);
+            c.Battle = this;
+            combatant_turn_info.Add(new CombatantInfo(c, default_move));
         }
-        // hold remaining delay to remove from all in turn list
-        int remaining_delay = combatant.DelayCurrent;
+    }
+
+    #region helper methods
+
+    private void ApplyMove(Character casting_character, Move move, Character target){
+        switch(move.Type){
+            case MoveType.SUPPORT:
+                target.Heal(move.Power);
+                break;
+            default:
+                target.Damage(move.Power);
+                break;
+        }
+    }
+
+    private CombatantInfo PopDelayQueue(List<CombatantInfo> delayList){
+        // find next combatant
+        CombatantInfo combatant_info = null;
+        for(int i = 0; i < delayList.Count; i++){
+            // if on valid combattant
+            if(delayList[i] != null && (combatant_info == null || combatant_info.CompareTo(delayList[i]) < 0)){
+                combatant_info = delayList[i];
+            }
+        }
         // if there is a next one, reduce all in list by the delay of next combatant
-        if(combatant != null){
-            for(int i = 0; i < delayList.Length; i++){
-                if(delayList[i] != null){
+        if(combatant_info != null){
+            // hold remaining delay to remove from all in turn list
+            int remaining_delay = combatant_info.DelayCurrent;
+            foreach(CombatantInfo ci in delayList){
+                if(ci != null){
                     // to avoid many at 0 delay
-                    delayList[i].ProgressTime(remaining_delay);
+                    ci.ProgressTime(remaining_delay);
                 }
             }
         }
-        return combatant.CasterIndex;
+        return combatant_info;
     }
 
     /**
      * copies from the array source into destination as much as possible, shallow copy
      * assumes the same length, will not copy if either of them are null
      */
-    private void CopyDelayInfo(TurnInfo[] source, TurnInfo[] destination){
-        if(source == null || destination == null){
-            return;
+    private List<CombatantInfo> CopyDelayInfo(List<CombatantInfo> source){
+        if(source == null){
+            return null;
         }
-        for(int i = 0; i < destination.Length; i++){
-            destination[i] = source[i].Copy();
+        List<CombatantInfo> result = new List<CombatantInfo>();
+        foreach(CombatantInfo ci in source){
+            result.Add(ci.Copy());
         }
+        return result;
     }
 
     private IEnumerator WaitForFlag(){

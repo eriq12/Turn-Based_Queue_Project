@@ -19,16 +19,19 @@ public class ButtonMiddleMan : MonoBehaviour, ISelectHandler, IDeselectHandler, 
                 return;
             }
             else if(value == null){
-                button.interactable = false;
                 text.text = "";
                 option = null;
             }
             else{
-                button.interactable = true;
                 text.text = value.Name;
                 option = value;
             }
         }
+    }
+
+    public bool interactable{
+        get { return button.interactable; }
+        set { button.interactable = value; }
     }
 
     public ButtonChoiceList ParentList{

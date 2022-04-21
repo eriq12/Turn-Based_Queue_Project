@@ -1275,6 +1275,7 @@ MonoBehaviour:
   team: {fileID: 11400000, guid: aa1fdf9c9d541362890569ad93937c22, type: 2}
   moveset:
   - {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
+  ui_options: {fileID: 0}
 --- !u!4 &978463434
 Transform:
   m_ObjectHideFlags: 0
@@ -1544,6 +1545,7 @@ MonoBehaviour:
   team: {fileID: 11400000, guid: 95b53fe20349fcc518ca66cfeb2debaf, type: 2}
   moveset:
   - {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
+  ui_options: {fileID: 0}
 --- !u!4 &1505361888
 Transform:
   m_ObjectHideFlags: 0
@@ -1643,6 +1645,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1635137458}
   - component: {fileID: 1635137457}
+  - component: {fileID: 1635137459}
   m_Layer: 0
   m_Name: Battlefield
   m_TagString: Untagged
@@ -1664,8 +1667,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ui_queue: {fileID: 1475603920}
   combatants:
-  - {fileID: 978463433}
-  - {fileID: 1505361887}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 1021218397}
   default_move: {fileID: 11400000, guid: 6ad11ef179de12b10b07e330c6685734, type: 2}
 --- !u!4 &1635137458
@@ -1682,6 +1685,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1635137459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635137456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adac44a0ccc7a8c4a894b9e4e327c938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  combatants:
+  - {fileID: 1021218397}
+  - {fileID: 1505361887}
+  - {fileID: 978463433}
+  battlefield: {fileID: 1635137457}
 --- !u!1 &1654279748
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,6 +2063,7 @@ MonoBehaviour:
   back_button: {fileID: 1999646734}
   button_preset: {fileID: 8550800653205777816, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}
   queue: {fileID: 1475603920}
+  delay_time: 0.1
 --- !u!114 &1786308304 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8550800653205777818, guid: 7b4f0a979e35f9d92987bd3e1612e767, type: 3}

@@ -10,12 +10,12 @@ public abstract class Character : MonoBehaviour, UIChoice
     protected string unit_name;
     // health
     [SerializeField]
-    protected int max_health = 20;
+    private int max_health = 20;
     [SerializeField]
-    protected int current_health;
+    private int current_health;
     // speed 
     [SerializeField]
-    protected int speed = 20;
+    private int speed = 20;
 
     [SerializeField]
     protected Faction team;
@@ -69,6 +69,23 @@ public abstract class Character : MonoBehaviour, UIChoice
         }
     }
 
+    public Battle Battle{
+        get { return current_battle; }
+        set { current_battle = value; }
+    }
+
+    #endregion
+
+    #region turn choice related
+    // ui to use
+    [SerializeField]
+    protected ButtonChoiceList ui_options;
+    // move selected
+    protected Move turn_move;
+    protected Character target;
+    // what are we choosing right now?
+    protected ChoiceType choice_type = ChoiceType.NONE;
+    protected bool choice_flag = false;
     #endregion
 
     protected Battle current_battle;
@@ -107,12 +124,29 @@ public abstract class Character : MonoBehaviour, UIChoice
         onHealthUpdate();
     }
 
-    public void EnterBattle(Battle b){
-        current_battle = b;
-    }
+    public bool ValidTarget(Character target, Move move = null){
+        if(move == null){
+            // this should never happen, but in case return false
+            if(turn_move == null) { return false; }
+            move = turn_move;
+        }
+        // also should never happen but in case return false
+        if(target == null && 
+            !(move.TargetRestriction == TargetRestriction.ALL || 
+                move.TargetRestriction == TargetRestriction.ALLY)){
+            return false;
+        }
+        // copying over from the other branch
+        // return false if the following conditions are true:
+        // can only target enemies and the target is an ally
+        // can only target allies and the target is an enemy
+        // other options should automatically target or have no restrictions
+        if(move.TargetRestriction == TargetRestriction.ENEMY && Faction.IsAlly(target.Faction) ||
+            move.TargetRestriction == TargetRestriction.ALLY && Faction.IsEnemy(target.Faction)){
+            return false;
+        }
+        return true;
 
-    public void LeaveBattle(){
-        current_battle = null;
     }
 
     public abstract IEnumerator StartTurn();
