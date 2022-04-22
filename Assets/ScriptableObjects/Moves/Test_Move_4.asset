@@ -16,3 +16,4 @@ MonoBehaviour:
   power: 0
   delay: 1
   move_type: 0
+  target_restriction: 4

@@ -20,6 +20,7 @@ public class Player : Character
             turn_move.TargetRestriction == TargetRestriction.SELF){
             ui_options.Options = null;
             current_battle.MakeMove(this, turn_move, null);
+            yield break;
         }
         choice_type = ChoiceType.TARGET;
         ui_options.Options = current_battle.Combatants;

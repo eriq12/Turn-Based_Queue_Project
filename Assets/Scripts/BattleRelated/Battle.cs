@@ -162,7 +162,7 @@ public class Battle : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         ui_queue.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.1f);
+        yield return null;
         // battle starts
         while(HasConflict){
             // add in other combatants
@@ -229,6 +229,8 @@ public class Battle : MonoBehaviour
         }
         // set delay
         caster_info.SetNewMove(selected_move);
+        // to avoid multiple selections to moves/targets doing multiple moves, should a bug arise
+        moving_character = null;
         //set flag so battle can proceed
         flag = true;
     }
@@ -256,18 +258,25 @@ public class Battle : MonoBehaviour
             join_queue.RemoveAt(0);
             c.Battle = this;
             combatant_turn_info.Add(new CombatantInfo(c, default_move));
+            EventLog.Log(c.Name + " enters the fray!");
         }
     }
 
     #region helper methods
 
     private void ApplyMove(Character casting_character, Move move, Character target){
+        EventLog.Log(String.Format("{0} used {1} on {2}!",casting_character.Name, move.Name, target.Name));
         switch(move.Type){
             case MoveType.SUPPORT:
                 target.Heal(move.Power);
+                EventLog.Log(String.Format("{0} recovered {1} hp!", target.Name, move.Power));
                 break;
             default:
-                target.Damage(move.Power);
+                bool targetAlive = target.Damage(move.Power);
+                EventLog.Log(String.Format("{0} lost {1} hp!", target.Name, move.Power));
+                if(!targetAlive){
+                    EventLog.Log(target.Name + " died!");
+                }
                 break;
         }
     }

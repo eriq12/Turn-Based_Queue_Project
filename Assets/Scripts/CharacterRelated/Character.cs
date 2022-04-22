@@ -108,12 +108,13 @@ public abstract class Character : MonoBehaviour, UIChoice
         return baseDelay * 128 / speed;
     }
 
-    public void Damage(int damage){
+    public bool Damage(int damage){
         current_health -= damage;
         if(current_health < 0){
             current_health = 0;
         }
         onHealthUpdate();
+        return IsAlive;
     }
 
     public void Heal(int restore){
